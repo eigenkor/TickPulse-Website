@@ -4,66 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TickPro — Hear the Markets Before You See Them</title>
+  <link rel="icon" href="icon.ico" type="image/x-icon" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #010409;
-      --surface: #0d1117;
-      --border: #21262d;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --dim: #484f58;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --pink: #ec4899;
-      --blue: #2563eb;
+      --bg: #ffffff;
+      --surface: #f8f9fb;
+      --elevated: #f0f2f5;
+      --border: #e2e5ea;
+      --border-strong: #c9cdd4;
+      --text: #1a1d23;
+      --text-secondary: #3d4350;
+      --muted: #6b7280;
+      --dim: #9ca3af;
+      --accent: #2563eb;
+      --accent-light: #eff4ff;
+      --green: #16a34a;
+      --green-light: #ecfdf5;
+      --red: #dc2626;
+      --orange: #d97706;
+      --pink: #db2777;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-
-    /* ── Animated background ── */
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(88,166,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(88,166,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .bg-glow {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.08;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .bg-glow-1 { top: -200px; left: -100px; background: var(--blue); }
-    .bg-glow-2 { bottom: -200px; right: -100px; background: var(--pink); }
 
     /* ── Nav ── */
     nav {
-      position: relative;
-      z-index: 10;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 48px;
+      padding: 16px 64px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
-      background: rgba(1,4,9,0.8);
-      backdrop-filter: blur(12px);
     }
 
     .nav-brand {
@@ -73,78 +57,98 @@
     }
 
     .nav-brand span {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: var(--muted);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--text);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 36px;
     }
 
     .nav-links a {
-      font-size: 13px;
-      color: var(--dim);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
       text-decoration: none;
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--text); }
 
+    .nav-cta {
+      padding: 8px 20px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff !important;
+      font-weight: 600;
+      font-size: 13px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: #1d4ed8; transform: translateY(-1px); }
+
     /* ── Hero ── */
     .hero {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
       align-items: center;
-      text-align: center;
-      padding: 100px 24px 80px;
+      padding: 80px 64px 100px;
+    }
+
+    .hero-content {
+      max-width: 600px;
     }
 
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 16px;
+      padding: 6px 14px;
       border-radius: 100px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 32px;
+      background: var(--green-light);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 28px;
     }
     .hero-badge .dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--green);
-      box-shadow: 0 0 8px var(--green);
+      box-shadow: 0 0 6px var(--green);
     }
 
     .hero h1 {
-      font-size: 56px;
+      font-size: 52px;
       font-weight: 800;
-      line-height: 1.1;
-      max-width: 700px;
+      line-height: 1.12;
       margin-bottom: 20px;
+      color: var(--text);
+      letter-spacing: -0.02em;
     }
-    .hero h1 .highlight { color: var(--accent); }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-    .hero p {
-      font-size: 17px;
-      color: var(--muted);
-      max-width: 520px;
+    .hero-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
       line-height: 1.7;
-      margin-bottom: 40px;
+      margin-bottom: 36px;
     }
 
     .hero-actions {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .btn-download {
@@ -152,98 +156,174 @@
       align-items: center;
       gap: 10px;
       padding: 14px 32px;
-      border-radius: 8px;
-      background: var(--green);
+      border-radius: 10px;
+      background: var(--accent);
       color: #fff;
       font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       border: none;
       cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.2);
     }
-    .btn-download:hover { background: #2ea043; transform: translateY(-1px); }
+    .btn-download:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+    }
 
     .btn-secondary {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 14px 28px;
-      border-radius: 8px;
-      background: var(--surface);
-      color: var(--muted);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text-secondary);
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s, color 0.2s;
+      border: 1px solid var(--border-strong);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
-    .btn-secondary:hover { border-color: var(--dim); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
     .version-tag {
-      margin-top: 16px;
-      font-size: 12px;
+      margin-top: 14px;
+      font-size: 13px;
       color: var(--dim);
       font-family: monospace;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.03em;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-mockup {
+      width: 100%;
+      max-width: 520px;
+      aspect-ratio: 16 / 10;
+      background: var(--text);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mockup-titlebar {
+      height: 32px;
+      background: #1e2028;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .mockup-dot-r { background: #f87171; }
+    .mockup-dot-y { background: #fbbf24; }
+    .mockup-dot-g { background: #34d399; }
+
+    .mockup-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      height: calc(100% - 32px);
+    }
+    .mockup-tile {
+      border-radius: 6px;
+      background: #282c36;
+      border: 1px solid #363b47;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .mockup-tile-label {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: monospace;
+      color: #9ca3af;
+      letter-spacing: 0.06em;
+    }
+    .mockup-tile-bar {
+      width: 60%;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      opacity: 0.7;
     }
 
     /* ── Stats ── */
     .stats {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      justify-content: center;
-      gap: 64px;
-      padding: 40px 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0 64px;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      background: rgba(13,17,23,0.5);
-      backdrop-filter: blur(8px);
+      background: var(--surface);
     }
 
     .stat {
-      text-align: center;
+      padding: 36px 32px;
+      text-align: left;
+      border-right: 1px solid var(--border);
     }
+    .stat:last-child { border-right: none; }
 
     .stat-value {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 800;
       color: var(--text);
       font-family: monospace;
+      letter-spacing: -0.02em;
     }
 
     .stat-label {
-      font-size: 11px;
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      font-size: 13px;
+      color: var(--muted);
       margin-top: 4px;
+      font-weight: 500;
     }
 
     /* ── Features ── */
     .features {
-      position: relative;
-      z-index: 1;
-      padding: 80px 48px;
-      max-width: 1100px;
-      margin: 0 auto;
+      padding: 100px 64px;
     }
 
-    .features-header {
-      text-align: center;
+    .features-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
       margin-bottom: 56px;
     }
 
-    .features-header h2 {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 12px;
+    .features-top h2 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      max-width: 480px;
+      line-height: 1.15;
     }
 
-    .features-header p {
-      font-size: 15px;
+    .features-top p {
+      font-size: 16px;
       color: var(--muted);
+      max-width: 380px;
+      line-height: 1.7;
+      text-align: right;
     }
 
     .features-grid {
@@ -255,365 +335,503 @@
     .feature-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      transition: border-color 0.2s, transform 0.2s;
+      border-radius: 14px;
+      padding: 32px;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
     }
     .feature-card:hover {
-      border-color: var(--dim);
-      transform: translateY(-2px);
+      border-color: var(--border-strong);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+      transform: translateY(-3px);
     }
 
     .feature-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: rgba(88,166,255,0.08);
-      border: 1px solid rgba(88,166,255,0.15);
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .feature-card h3 {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       margin-bottom: 8px;
+      color: var(--text);
     }
 
     .feature-card p {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* ── How it works ── */
     .how-it-works {
-      position: relative;
-      z-index: 1;
-      padding: 80px 48px;
+      padding: 100px 64px;
+      background: var(--surface);
       border-top: 1px solid var(--border);
-      max-width: 900px;
-      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
     }
 
     .how-it-works h2 {
-      text-align: center;
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 48px;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 56px;
     }
 
     .steps {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 32px;
     }
 
     .step {
       display: flex;
-      gap: 20px;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .step-num {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .step h3 {
+      font-size: 17px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--text);
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Testimonial / Trust ── */
+    .trust {
+      padding: 80px 64px;
+      display: flex;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .trust-text {
+      flex: 1;
+    }
+
+    .trust-text blockquote {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.6;
+      color: var(--text);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .trust-text cite {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .trust-features {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .trust-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
-    .step-content h3 {
-      font-size: 16px;
+    .trust-item-text {
+      font-size: 14px;
       font-weight: 600;
-      margin-bottom: 4px;
+      color: var(--text);
     }
 
-    .step-content p {
-      font-size: 14px;
+    .trust-item-desc {
+      font-size: 13px;
       color: var(--muted);
-      line-height: 1.6;
+      margin-top: 2px;
+      font-weight: 400;
     }
 
     /* ── CTA ── */
     .cta {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 80px 24px;
-      border-top: 1px solid var(--border);
+      padding: 100px 64px;
+      background: var(--text);
+      color: #fff;
+    }
+
+    .cta-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .cta h2 {
-      font-size: 36px;
-      font-weight: 700;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
       margin-bottom: 12px;
     }
 
     .cta p {
-      font-size: 15px;
-      color: var(--muted);
-      margin-bottom: 32px;
+      font-size: 16px;
+      color: #9ca3af;
+      line-height: 1.7;
+      max-width: 440px;
+    }
+
+    .cta .btn-download {
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .cta .btn-download:hover {
+      background: #f0f2f5;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .cta-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .cta .version-tag {
+      color: #6b7280;
     }
 
     /* ── Footer ── */
     footer {
-      position: relative;
-      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 48px;
+      padding: 28px 64px;
       border-top: 1px solid var(--border);
-      font-size: 12px;
+      font-size: 13px;
       color: var(--dim);
     }
 
     footer a {
-      color: var(--dim);
+      color: var(--muted);
       text-decoration: none;
+      font-weight: 500;
     }
-    footer a:hover { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
 
     /* ── Responsive ── */
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { gap: 20px; }
-      .hero { padding: 60px 20px 50px; }
-      .hero h1 { font-size: 36px; }
-      .hero p { font-size: 15px; }
-      .hero-actions { flex-direction: column; }
-      .stats { flex-wrap: wrap; gap: 32px; padding: 32px 20px; }
+    @media (max-width: 1024px) {
+      nav { padding: 16px 32px; }
+      .hero { grid-template-columns: 1fr; padding: 60px 32px 80px; gap: 48px; }
+      .hero-visual { display: none; }
+      .stats { grid-template-columns: repeat(2, 1fr); padding: 0 32px; }
+      .stat:nth-child(2) { border-right: none; }
+      .features { padding: 80px 32px; }
+      .features-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .features-top p { text-align: left; }
+      .how-it-works { padding: 80px 32px; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .trust { flex-direction: column; padding: 60px 32px; }
+      .cta { padding: 80px 32px; }
+      .cta-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
+      .cta-right { align-items: flex-start; }
+      footer { padding: 24px 32px; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 16px; }
+      .hero { padding: 40px 20px 60px; }
+      .hero h1 { font-size: 34px; }
+      .hero-desc { font-size: 16px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .btn-download, .btn-secondary { justify-content: center; }
+      .stats { grid-template-columns: 1fr; padding: 0 20px; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
       .features { padding: 60px 20px; }
       .features-grid { grid-template-columns: 1fr; }
       .how-it-works { padding: 60px 20px; }
-      footer { flex-direction: column; gap: 8px; padding: 20px; }
+      .steps { grid-template-columns: 1fr; }
+      .cta { padding: 60px 20px; }
+      footer { flex-direction: column; gap: 12px; padding: 20px; text-align: center; }
     }
 
     /* ── Animations ── */
     @keyframes fade-up {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .animate-fade-up {
-      animation: fade-up 0.6s ease-out both;
-    }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
+    .animate { animation: fade-up 0.5s ease-out both; }
+    .d1 { animation-delay: 0.08s; }
+    .d2 { animation-delay: 0.16s; }
+    .d3 { animation-delay: 0.24s; }
+    .d4 { animation-delay: 0.32s; }
   </style>
 </head>
 <body>
 
-  <!-- Background effects -->
-  <div class="bg-grid"></div>
-  <div class="bg-glow bg-glow-1"></div>
-  <div class="bg-glow bg-glow-2"></div>
-
   <!-- Nav -->
   <nav>
     <div class="nav-brand">
-      <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
-        <path d="M50 5 A45 45 0 0 0 50 95" stroke="#2563eb" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <path d="M50 95 A45 45 0 0 0 50 5" stroke="#ec4899" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <circle cx="50" cy="50" r="32" fill="white"/>
-        <circle cx="50" cy="50" r="24" fill="#0a0a0a"/>
-        <circle cx="58" cy="42" r="10" fill="#ec4899"/>
-        <circle cx="55" cy="40" r="8" fill="#0a0a0a"/>
-      </svg>
+      <img src="icon.ico" alt="TickPro" width="28" height="28" style="border-radius: 6px;" />
       <span>TICKPRO</span>
     </div>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How it works</a>
-      <a href="#download">Download</a>
+      <a href="#download" class="nav-cta">Download</a>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge animate-fade-up">
-      <span class="dot"></span>
-      <span>Real-time order flow audio engine</span>
+    <div class="hero-content">
+      <div class="hero-badge animate">
+        <span class="dot"></span>
+        Real-time order flow audio engine
+      </div>
+
+      <h1 class="animate d1">
+        Hear the markets <span class="highlight">before</span> you see them.
+      </h1>
+
+      <p class="hero-desc animate d2">
+        TickPro turns raw order flow into spatial audio you can feel. Every buy, every sell, every
+        institutional block trade becomes a distinct sound in your headphones. You'll sense momentum
+        shifts, exhaustion, and fake spikes seconds before they appear on any chart.
+      </p>
+
+      <div class="hero-actions animate d3">
+        <a href="https://github.com/eigenkor/TickPro-Releases/releases/latest" class="btn-download" id="hero-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download for Windows
+        </a>
+        <a href="#features" class="btn-secondary">See what's inside</a>
+      </div>
+
+      <p class="version-tag animate d4" id="hero-version">Windows 10/11 &middot; Auto-updates enabled</p>
     </div>
 
-    <h1 class="animate-fade-up delay-1">
-      Hear the markets<br><span class="highlight">before</span> you see them.
-    </h1>
-
-    <p class="animate-fade-up delay-2">
-      TickPro transforms raw market data into spatial audio — giving you
-      an edge no screen can match. Cluster-aware sound synthesis, stereo separation,
-      and institutional-grade flow detection.
-    </p>
-
-    <div class="hero-actions animate-fade-up delay-3">
-      <a href="https://github.com/eigenkor/TickPro-Releases/releases/latest" class="btn-download" id="hero-download">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Download for Windows
-      </a>
+    <div class="hero-visual animate d2">
+      <div class="hero-mockup">
+        <div class="mockup-titlebar">
+          <span class="mockup-dot mockup-dot-r"></span>
+          <span class="mockup-dot mockup-dot-y"></span>
+          <span class="mockup-dot mockup-dot-g"></span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-tile"><span class="mockup-tile-label">NQ</span><span class="mockup-tile-bar"></span></div>
+          <div class="mockup-tile"><span class="mockup-tile-label">ES</span><span class="mockup-tile-bar" style="background:linear-gradient(90deg,#f87171,#fbbf24)"></span></div>
+          <div class="mockup-tile"><span class="mockup-tile-label">YM</span><span class="mockup-tile-bar" style="background:linear-gradient(90deg,#22c55e,#3b82f6)"></span></div>
+          <div class="mockup-tile"><span class="mockup-tile-label">CL</span><span class="mockup-tile-bar" style="background:linear-gradient(90deg,#a78bfa,#ec4899)"></span></div>
+          <div class="mockup-tile"><span class="mockup-tile-label">GC</span><span class="mockup-tile-bar" style="background:linear-gradient(90deg,#fbbf24,#f97316)"></span></div>
+          <div class="mockup-tile"><span class="mockup-tile-label">BTC</span><span class="mockup-tile-bar" style="background:linear-gradient(90deg,#3b82f6,#8b5cf6)"></span></div>
+        </div>
+      </div>
     </div>
-
-    <p class="version-tag animate-fade-up delay-3" id="hero-version">Windows 10/11 &middot; Auto-updates enabled</p>
   </section>
 
   <!-- Stats -->
   <section class="stats">
     <div class="stat">
-      <div class="stat-value">&lt; 1ms</div>
-      <div class="stat-label">Audio Latency</div>
+      <div class="stat-value">13</div>
+      <div class="stat-label">Distinct sound styles to choose from</div>
     </div>
     <div class="stat">
-      <div class="stat-value">10+</div>
-      <div class="stat-label">Exchanges</div>
+      <div class="stat-value">6</div>
+      <div class="stat-label">Audio modules running simultaneously</div>
     </div>
     <div class="stat">
-      <div class="stat-value">50M+</div>
-      <div class="stat-label">Ticks / Day</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">200ms</div>
-      <div class="stat-label">Cluster Window</div>
+      <div class="stat-value">3</div>
+      <div class="stat-label">Tuning profiles for any trading style</div>
     </div>
   </section>
 
   <!-- Features -->
   <section class="features" id="features">
-    <div class="features-header">
-      <h2>Built for serious traders</h2>
-      <p>Every feature designed to give you an auditory edge in fast markets.</p>
+    <div class="features-top">
+      <h2>Everything you need to trade by ear</h2>
+      <p>Six audio modules working together give you a complete picture of market microstructure — without looking at a screen.</p>
     </div>
 
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="1.5">
-            <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
-            <path d="M19 10v2a7 7 0 01-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
+        <div class="feature-icon" style="background: #eff4ff; border: 1px solid #dbeafe;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5">
+            <path d="M3 18v-6a9 9 0 0118 0v6"/>
+            <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>
           </svg>
         </div>
-        <h3>Spatial Audio Order Flow</h3>
-        <p>Buys pan left, sells pan right. Feel the pressure shift in real-time through stereo separation.</p>
+        <h3>Spatial Stereo Separation</h3>
+        <p>Buys in your left ear, sells in your right. Feel the pressure shift between buyers and sellers in real-time without reading a single number.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon" style="background: rgba(63,185,80,0.08); border-color: rgba(63,185,80,0.15);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="1.5">
+        <div class="feature-icon" style="background: #ecfdf5; border: 1px solid #d1fae5;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.5">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
         </div>
-        <h3>Cluster-Aware Synthesis</h3>
-        <p>200ms tick clustering groups rapid-fire orders into single bursts. No noise — just signal.</p>
+        <h3>Dominance Ratio Engine</h3>
+        <p>The DR tracks buy vs sell pressure on a rolling tick window. When it crosses 0.50, you hear the momentum flip — seconds before it shows on a chart.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon" style="background: rgba(210,153,34,0.08); border-color: rgba(210,153,34,0.15);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d29922" stroke-width="1.5">
+        <div class="feature-icon" style="background: #fffbeb; border: 1px solid #fef3c7;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 01-3.46 0"/>
           </svg>
         </div>
-        <h3>Large Print Detection</h3>
-        <p>Institutional-size orders trigger deep gong alerts. The bigger the trade, the louder the signal.</p>
+        <h3>Block Trade Gong</h3>
+        <p>Institutional-size orders trigger a deep metallic gong. The bigger the trade, the louder it rings. Rapid gongs mean someone large is in the market.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon" style="background: rgba(248,81,73,0.08); border-color: rgba(248,81,73,0.15);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="1.5">
+        <div class="feature-icon" style="background: #fef2f2; border: 1px solid #fee2e2;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.5">
             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
             <polyline points="17 6 23 6 23 12"/>
           </svg>
         </div>
-        <h3>Delta Reversals</h3>
-        <p>Momentum hand-offs detected in real-time. Ascending chime for bullish, descending for bearish flips.</p>
+        <h3>Fake Spike Detector</h3>
+        <p>Detects abnormal velocity spikes that are likely stop-runs. A warning alarm fires, then a reversal sweep confirms the fake — so you take the opposite side.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon" style="background: rgba(139,148,158,0.08); border-color: rgba(139,148,158,0.15);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="1.5">
+        <div class="feature-icon" style="background: #f5f3ff; border: 1px solid #ede9fe;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
         </div>
-        <h3>Exhaustion Signals</h3>
-        <p>Velocity peak then rapid drop — often precedes reversals. Descending tone warns momentum is fading.</p>
+        <h3>Exhaustion Alerts</h3>
+        <p>When BPM peaks then rapidly drops, momentum is dying. You hear a descending sweep 2-5 seconds before the move fades on your chart.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon" style="background: rgba(236,72,153,0.08); border-color: rgba(236,72,153,0.15);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="1.5">
-            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-            <line x1="4" y1="22" x2="4" y2="15"/>
+        <div class="feature-icon" style="background: #fdf2f8; border: 1px solid #fce7f3;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="1.5">
+            <path d="M12 20V10M6 20V4M18 20V16"/>
           </svg>
         </div>
-        <h3>Auto-Updates</h3>
-        <p>Always running the latest version. Updates download in the background and install on restart.</p>
+        <h3>13 Sound Presets</h3>
+        <p>Click, bell, chime, pop, blip, tone, alarm, sweep, siren, gong, drum, buzz, glass — each a distinct synthesis recipe you can assign to any module.</p>
       </div>
     </div>
   </section>
 
   <!-- How it works -->
   <section class="how-it-works" id="how-it-works">
-    <h2>Get started in 30 seconds</h2>
+    <h2>Up and running in 30 seconds</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-content">
-          <h3>Download & Install</h3>
-          <p>Grab the installer, run it, and TickPro is ready. No configuration needed.</p>
-        </div>
+        <h3>Download &amp; Install</h3>
+        <p>One installer, no dependencies. TickPro is ready the moment you run it.</p>
       </div>
       <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <h3>Sign In</h3>
-          <p>Authenticate securely through your browser. Your credentials never touch the app.</p>
-        </div>
+        <div class="step-num" style="background: var(--green);">2</div>
+        <h3>Sign In Securely</h3>
+        <p>Authenticate through your browser. Your credentials never touch the app directly.</p>
       </div>
       <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <h3>Toggle Symbols</h3>
-          <p>Pick the instruments you trade — futures, stocks, crypto, forex. Activate them with one click.</p>
-        </div>
+        <div class="step-num" style="background: var(--orange);">3</div>
+        <h3>Pick Your Symbols</h3>
+        <p>Toggle the instruments you trade — futures, stocks, crypto, forex. One click to activate.</p>
       </div>
       <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <h3>Put on Headphones</h3>
-          <p>Stereo separation places buys in your left ear, sells in your right. Feel the market flow.</p>
-        </div>
+        <div class="step-num" style="background: var(--pink);">4</div>
+        <h3>Put On Headphones</h3>
+        <p>Stereo separation makes the entire market audible. Close your eyes and feel the flow.</p>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="cta" id="download">
-    <h2>Ready to trade with your ears?</h2>
-    <p>Download TickPro and experience order flow like never before.</p>
-    <a href="https://github.com/eigenkor/TickPro-Releases/releases/latest" class="btn-download" id="cta-download">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      Download for Windows
-    </a>
-    <p class="version-tag" id="cta-version" style="margin-top: 16px;">Windows 10/11</p>
+  <!-- Trust / Why section -->
+  <section class="trust">
+    <div class="trust-text">
+      <blockquote>
+        "Your eyes can only track one chart at a time. Your ears can monitor
+        everything at once. That's the edge."
+      </blockquote>
+      <cite>The idea behind TickPro</cite>
+    </div>
+    <div class="trust-features">
+      <div class="trust-item">
+        <div class="trust-item-icon" style="background: #ecfdf5; border: 1px solid #d1fae5;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div>
+          <div class="trust-item-text">Auto-updates</div>
+          <div class="trust-item-desc">Always the latest version, downloaded in the background</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-item-icon" style="background: #eff4ff; border: 1px solid #dbeafe;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div>
+          <div class="trust-item-text">Secure authentication</div>
+          <div class="trust-item-desc">OAuth2 PKCE flow — credentials never stored locally</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-item-icon" style="background: #f5f3ff; border: 1px solid #ede9fe;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="trust-item-text">3 tuning profiles</div>
+          <div class="trust-item-desc">Scalp Tight, Scalp Balanced, and Swing — switch in one click</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->
@@ -633,12 +851,8 @@
         const sizeMB = exe ? Math.round(exe.size / 1024 / 1024) : null;
 
         document.getElementById('hero-download').href = downloadUrl;
-        document.getElementById('cta-download').href = downloadUrl;
 
-        const versionLabel = version + ' \u00b7 Windows 10/11 \u00b7 Auto-updates enabled';
-        const ctaLabel = version + (sizeMB ? ' \u00b7 ' + sizeMB + ' MB' : '') + ' \u00b7 Windows 10/11';
-        document.getElementById('hero-version').textContent = versionLabel;
-        document.getElementById('cta-version').textContent = ctaLabel;
+        document.getElementById('hero-version').textContent = version + ' \u00b7 Windows 10/11 \u00b7 Auto-updates enabled';
       } catch (e) {}
     })();
   </script>
