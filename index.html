@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TickPulse — Hear the Markets Before You See Them</title>
+  <title>TickPro — Hear the Markets Before You See Them</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -430,7 +430,7 @@
         <circle cx="58" cy="42" r="10" fill="#ec4899"/>
         <circle cx="55" cy="40" r="8" fill="#0a0a0a"/>
       </svg>
-      <span>TICKPULSE</span>
+      <span>TICKPRO</span>
     </div>
     <div class="nav-links">
       <a href="#features">Features</a>
@@ -451,13 +451,13 @@
     </h1>
 
     <p class="animate-fade-up delay-2">
-      TickPulse transforms raw market data into spatial audio — giving you
+      TickPro transforms raw market data into spatial audio — giving you
       an edge no screen can match. Cluster-aware sound synthesis, stereo separation,
       and institutional-grade flow detection.
     </p>
 
     <div class="hero-actions animate-fade-up delay-3">
-      <a href="https://github.com/eigenkor/TickPulse-Releases/releases/latest" class="btn-download" id="hero-download">
+      <a href="https://github.com/eigenkor/TickPro-Releases/releases/latest" class="btn-download" id="hero-download">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
@@ -574,7 +574,7 @@
         <div class="step-num">1</div>
         <div class="step-content">
           <h3>Download & Install</h3>
-          <p>Grab the installer, run it, and TickPulse is ready. No configuration needed.</p>
+          <p>Grab the installer, run it, and TickPro is ready. No configuration needed.</p>
         </div>
       </div>
       <div class="step">
@@ -604,8 +604,8 @@
   <!-- CTA -->
   <section class="cta" id="download">
     <h2>Ready to trade with your ears?</h2>
-    <p>Download TickPulse and experience order flow like never before.</p>
-    <a href="https://github.com/eigenkor/TickPulse-Releases/releases/latest" class="btn-download" id="cta-download">
+    <p>Download TickPro and experience order flow like never before.</p>
+    <a href="https://github.com/eigenkor/TickPro-Releases/releases/latest" class="btn-download" id="cta-download">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
         <polyline points="7 10 12 15 17 10"/>
@@ -624,7 +624,7 @@
   <script>
     (async function() {
       try {
-        const res = await fetch('https://api.github.com/repos/eigenkor/TickPulse-Releases/releases/latest');
+        const res = await fetch('https://api.github.com/repos/eigenkor/TickPro-Releases/releases/latest');
         if (!res.ok) return;
         const data = await res.json();
         const version = data.tag_name || '';
