@@ -141,6 +141,36 @@ body.tp-locked::before { display: none !important; }
   letter-spacing: .1em; border-top: 1px solid var(--line); padding-top: 12px;
   animation: gateFadeUp .9s .65s cubic-bezier(.22,.61,.36,1) both;
 }
+/* ── Gate method tabs ── */
+#tp-gate .gate-tabs {
+  width: 100%; display: flex; gap: 0; margin-bottom: 20px;
+  border: 1px solid rgba(0,212,255,.18); overflow: hidden;
+  animation: gateFadeUp .9s .35s cubic-bezier(.22,.61,.36,1) both;
+}
+#tp-gate .gate-tab {
+  flex: 1; padding: 10px 0; text-align: center;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--w3); background: transparent; border: none; cursor: pointer;
+  transition: all .25s; position: relative;
+}
+#tp-gate .gate-tab:not(:last-child) { border-right: 1px solid rgba(0,212,255,.18); }
+#tp-gate .gate-tab.active { color: var(--cyan); background: rgba(0,212,255,.08); }
+#tp-gate .gate-tab:hover:not(.active) { color: var(--w2); background: rgba(0,212,255,.04); }
+#tp-gate .gate-method { display: none; width: 100%; }
+#tp-gate .gate-method.active { display: block; }
+/* ── TOTP input ── */
+#tp-gate .gate-totp-wrap {
+  width: 100%; display: flex; gap: 8px; justify-content: center;
+}
+#tp-gate .gate-totp-wrap input {
+  width: 42px; height: 52px; text-align: center;
+  background: rgba(0,212,255,.04);
+  border: 1px solid rgba(0,212,255,.2); border-top-color: rgba(0,212,255,.35);
+  color: var(--white); font-family: var(--mono); font-size: 22px; font-weight: 600;
+  outline: none; transition: all .25s;
+}
+#tp-gate .gate-totp-wrap input:focus { border-color: rgba(0,212,255,.55); box-shadow: 0 0 20px rgba(0,212,255,.1); }
+#tp-gate .gate-totp-wrap input::placeholder { color: var(--w5); font-size: 16px; }
 body:not(.tp-locked) #tp-gate { display: none !important; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; font-family: var(--body); }
@@ -2573,16 +2603,35 @@ function toggleFaq(el) {
       <h1 class="gate-welcome">Welcome back</h1>
       <p class="gate-welcome-sub">Authorized access only</p>
 
+      <div class="gate-tabs">
+        <button class="gate-tab active" data-method="pwd">Password</button>
+        <button class="gate-tab" data-method="totp">TOTP</button>
+      </div>
+
       <form id="tp-gate-form" style="width:100%">
-        <div class="gate-input-wrap">
-          <input type="password" id="tp-gate-pwd" placeholder="Enter password" autocomplete="off" autofocus>
-          <button type="submit" class="gate-submit-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-              <polyline points="10 17 15 12 10 7"/>
-              <line x1="15" y1="12" x2="3" y2="12"/>
-            </svg>
-          </button>
+        <!-- Password method -->
+        <div class="gate-method active" id="gate-method-pwd">
+          <div class="gate-input-wrap">
+            <input type="password" id="tp-gate-pwd" placeholder="Enter password" autocomplete="off" autofocus>
+            <button type="submit" class="gate-submit-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                <polyline points="10 17 15 12 10 7"/>
+                <line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <!-- TOTP method -->
+        <div class="gate-method" id="gate-method-totp">
+          <div class="gate-totp-wrap">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="0" autocomplete="off">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="1" autocomplete="off">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="2" autocomplete="off">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="3" autocomplete="off">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="4" autocomplete="off">
+            <input type="text" inputmode="numeric" maxlength="1" class="totp-digit" data-idx="5" autocomplete="off">
+          </div>
         </div>
         <div class="gate-err" id="tp-gate-err"></div>
       </form>
@@ -2608,26 +2657,134 @@ function toggleFaq(el) {
 (function(){
   /* ── Auth logic ── */
   var H='186c650890a6a6070d1c4ca3a85a38ab6857c4c1bea2abab341af91f7b7dcfa6';
+  /* TOTP shared secret (Base32). Replace with your own secret. */
+  var TOTP_SECRET='7SU5ERUBEKYBRZLB7LW5L4FAEWSP6BJP';
+  var activeMethod='pwd';
+
   function unlock(){
     document.body.classList.remove('tp-locked');
-    /* Stop gate animations to free resources */
     gateActive=false;
   }
   if(sessionStorage.getItem('tp_auth')==='1'){unlock();return;}
+
+  /* ── Tab switching ── */
+  document.querySelectorAll('.gate-tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('.gate-tab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.gate-method').forEach(function(m){m.classList.remove('active');});
+      tab.classList.add('active');
+      activeMethod=tab.getAttribute('data-method');
+      document.getElementById('gate-method-'+activeMethod).classList.add('active');
+      document.getElementById('tp-gate-err').textContent='';
+      if(activeMethod==='pwd'){document.getElementById('tp-gate-pwd').focus();}
+      else{var first=document.querySelector('.totp-digit[data-idx="0"]');if(first)first.focus();}
+    });
+  });
+
+  /* ── TOTP digit inputs ── */
+  var totpDigits=document.querySelectorAll('.totp-digit');
+  totpDigits.forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var v=inp.value.replace(/\D/g,'');
+      inp.value=v.slice(0,1);
+      if(v.length>=1){
+        var idx=parseInt(inp.getAttribute('data-idx'));
+        if(idx<5){var next=document.querySelector('.totp-digit[data-idx="'+(idx+1)+'"]');if(next)next.focus();}
+        /* Auto-submit when all 6 digits entered */
+        var code=Array.from(totpDigits).map(function(d){return d.value;}).join('');
+        if(code.length===6)verifyTotp(code);
+      }
+    });
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Backspace'&&!inp.value){
+        var idx=parseInt(inp.getAttribute('data-idx'));
+        if(idx>0){var prev=document.querySelector('.totp-digit[data-idx="'+(idx-1)+'"]');if(prev){prev.focus();prev.value='';}}
+      }
+    });
+    inp.addEventListener('paste',function(e){
+      e.preventDefault();
+      var paste=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      for(var i=0;i<paste.length&&i<6;i++){totpDigits[i].value=paste[i];}
+      if(paste.length===6)verifyTotp(paste);
+      else if(paste.length>0){var nxt=document.querySelector('.totp-digit[data-idx="'+paste.length+'"]');if(nxt)nxt.focus();}
+    });
+  });
+
+  /* ── Base32 decode ── */
+  function b32decode(s){
+    var alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    s=s.replace(/=+$/,'').toUpperCase();
+    var bits='';
+    for(var i=0;i<s.length;i++){var val=alpha.indexOf(s[i]);if(val===-1)continue;bits+=('00000'+val.toString(2)).slice(-5);}
+    var bytes=new Uint8Array(Math.floor(bits.length/8));
+    for(var i=0;i<bytes.length;i++)bytes[i]=parseInt(bits.slice(i*8,i*8+8),2);
+    return bytes;
+  }
+
+  /* ── HMAC-SHA1 via Web Crypto ── */
+  async function hmacSha1(keyBytes,msgBytes){
+    var key=await crypto.subtle.importKey('raw',keyBytes,{name:'HMAC',hash:'SHA-1'},false,['sign']);
+    var sig=await crypto.subtle.sign('HMAC',key,msgBytes);
+    return new Uint8Array(sig);
+  }
+
+  /* ── Generate TOTP code ── */
+  async function generateTOTP(secret,timeStep){
+    timeStep=timeStep||30;
+    var epoch=Math.floor(Date.now()/1000);
+    var counter=Math.floor(epoch/timeStep);
+    /* Convert counter to 8-byte big-endian */
+    var msg=new Uint8Array(8);
+    for(var i=7;i>=0;i--){msg[i]=counter&0xff;counter=Math.floor(counter/256);}
+    var keyBytes=b32decode(secret);
+    var hash=await hmacSha1(keyBytes,msg);
+    var offset=hash[hash.length-1]&0x0f;
+    var code=((hash[offset]&0x7f)<<24|(hash[offset+1]&0xff)<<16|(hash[offset+2]&0xff)<<8|(hash[offset+3]&0xff))%1000000;
+    return ('000000'+code).slice(-6);
+  }
+
+  /* ── Verify TOTP (allow ±1 window for clock drift) ── */
+  async function verifyTotp(code){
+    var timeStep=30;
+    var epoch=Math.floor(Date.now()/1000);
+    var currentCounter=Math.floor(epoch/timeStep);
+    for(var drift=-1;drift<=1;drift++){
+      var counter=currentCounter+drift;
+      var msg=new Uint8Array(8);
+      var c=counter;
+      for(var i=7;i>=0;i--){msg[i]=c&0xff;c=Math.floor(c/256);}
+      var keyBytes=b32decode(TOTP_SECRET);
+      var hash=await hmacSha1(keyBytes,msg);
+      var offset=hash[hash.length-1]&0x0f;
+      var otp=((hash[offset]&0x7f)<<24|(hash[offset+1]&0xff)<<16|(hash[offset+2]&0xff)<<8|(hash[offset+3]&0xff))%1000000;
+      var expected=('000000'+otp).slice(-6);
+      if(code===expected){sessionStorage.setItem('tp_auth','1');unlock();return;}
+    }
+    showGateErr('Invalid code');
+    totpDigits.forEach(function(d){d.value='';});
+    totpDigits[0].focus();
+  }
+
+  function showGateErr(msg){
+    document.getElementById('tp-gate-err').textContent=msg;
+    var card=document.querySelector('.gate-card');
+    card.style.animation='none';card.offsetHeight;
+    card.style.animation='gateShake .4s ease';
+  }
+
   document.getElementById('tp-gate-form').addEventListener('submit',async function(e){
     e.preventDefault();
-    var pwd=document.getElementById('tp-gate-pwd').value;
-    var buf=new TextEncoder().encode(pwd);
-    var hash=await crypto.subtle.digest('SHA-256',buf);
-    var hex=Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-    if(hex===H){sessionStorage.setItem('tp_auth','1');unlock();}
-    else{
-      document.getElementById('tp-gate-err').textContent='Invalid password';
-      document.getElementById('tp-gate-pwd').value='';
-      /* Shake the card */
-      var card=document.querySelector('.gate-card');
-      card.style.animation='none';card.offsetHeight;
-      card.style.animation='gateShake .4s ease';
+    if(activeMethod==='pwd'){
+      var pwd=document.getElementById('tp-gate-pwd').value;
+      var buf=new TextEncoder().encode(pwd);
+      var hash=await crypto.subtle.digest('SHA-256',buf);
+      var hex=Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      if(hex===H){sessionStorage.setItem('tp_auth','1');unlock();}
+      else{showGateErr('Invalid password');document.getElementById('tp-gate-pwd').value='';}
+    } else {
+      var code=Array.from(totpDigits).map(function(d){return d.value;}).join('');
+      if(code.length!==6){showGateErr('Enter all 6 digits');return;}
+      await verifyTotp(code);
     }
   });
 
