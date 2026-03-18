@@ -2661,11 +2661,24 @@ function toggleFaq(el) {
   var TOTP_SECRET='7SU5ERUBEKYBRZLB7LW5L4FAEWSP6BJP';
   var activeMethod='pwd';
 
+  var logoutTimer=null;
   function unlock(){
     document.body.classList.remove('tp-locked');
     gateActive=false;
+    /* Auto-logout after 10 minutes */
+    if(logoutTimer)clearTimeout(logoutTimer);
+    logoutTimer=setTimeout(function(){lock();},10*60*1000);
   }
-  if(sessionStorage.getItem('tp_auth')==='1'){unlock();return;}
+  function lock(){
+    if(logoutTimer){clearTimeout(logoutTimer);logoutTimer=null;}
+    document.body.classList.add('tp-locked');
+    gateActive=true;
+    document.getElementById('tp-gate-pwd').value='';
+    document.querySelectorAll('.totp-digit').forEach(function(d){d.value='';});
+    document.getElementById('tp-gate-err').textContent='Session expired';
+    /* Re-init gate rain if needed */
+    if(typeof initGateRain==='function')initGateRain();
+  }
 
   /* ── Tab switching ── */
   document.querySelectorAll('.gate-tab').forEach(function(tab){
@@ -2743,23 +2756,20 @@ function toggleFaq(el) {
     return ('000000'+code).slice(-6);
   }
 
-  /* ── Verify TOTP (allow ±1 window for clock drift) ── */
+  /* ── Verify TOTP (exact current window only) ── */
   async function verifyTotp(code){
     var timeStep=30;
     var epoch=Math.floor(Date.now()/1000);
-    var currentCounter=Math.floor(epoch/timeStep);
-    for(var drift=-1;drift<=1;drift++){
-      var counter=currentCounter+drift;
-      var msg=new Uint8Array(8);
-      var c=counter;
-      for(var i=7;i>=0;i--){msg[i]=c&0xff;c=Math.floor(c/256);}
-      var keyBytes=b32decode(TOTP_SECRET);
-      var hash=await hmacSha1(keyBytes,msg);
-      var offset=hash[hash.length-1]&0x0f;
-      var otp=((hash[offset]&0x7f)<<24|(hash[offset+1]&0xff)<<16|(hash[offset+2]&0xff)<<8|(hash[offset+3]&0xff))%1000000;
-      var expected=('000000'+otp).slice(-6);
-      if(code===expected){sessionStorage.setItem('tp_auth','1');unlock();return;}
-    }
+    var counter=Math.floor(epoch/timeStep);
+    var msg=new Uint8Array(8);
+    var c=counter;
+    for(var i=7;i>=0;i--){msg[i]=c&0xff;c=Math.floor(c/256);}
+    var keyBytes=b32decode(TOTP_SECRET);
+    var hash=await hmacSha1(keyBytes,msg);
+    var offset=hash[hash.length-1]&0x0f;
+    var otp=((hash[offset]&0x7f)<<24|(hash[offset+1]&0xff)<<16|(hash[offset+2]&0xff)<<8|(hash[offset+3]&0xff))%1000000;
+    var expected=('000000'+otp).slice(-6);
+    if(code===expected){unlock();return;}
     showGateErr('Invalid code');
     totpDigits.forEach(function(d){d.value='';});
     totpDigits[0].focus();
@@ -2779,7 +2789,7 @@ function toggleFaq(el) {
       var buf=new TextEncoder().encode(pwd);
       var hash=await crypto.subtle.digest('SHA-256',buf);
       var hex=Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(hex===H){sessionStorage.setItem('tp_auth','1');unlock();}
+      if(hex===H){unlock();}
       else{showGateErr('Invalid password');document.getElementById('tp-gate-pwd').value='';}
     } else {
       var code=Array.from(totpDigits).map(function(d){return d.value;}).join('');
