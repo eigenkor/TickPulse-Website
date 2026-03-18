@@ -2662,7 +2662,7 @@ function toggleFaq(el) {
   var activeMethod='pwd';
 
   var logoutTimer=null;
-  var AUTH_TTL=10*60*1000; /* 10 minutes */
+  var AUTH_TTL=5*60*1000; /* 5 minutes */
   function unlock(){
     document.body.classList.remove('tp-locked');
     gateActive=false;
