@@ -2662,15 +2662,19 @@ function toggleFaq(el) {
   var activeMethod='pwd';
 
   var logoutTimer=null;
+  var AUTH_TTL=10*60*1000; /* 10 minutes */
   function unlock(){
     document.body.classList.remove('tp-locked');
     gateActive=false;
+    /* Persist auth with timestamp so it survives in-tab redirects (OAuth) */
+    sessionStorage.setItem('tp_auth',Date.now().toString());
     /* Auto-logout after 10 minutes */
     if(logoutTimer)clearTimeout(logoutTimer);
-    logoutTimer=setTimeout(function(){lock();},10*60*1000);
+    logoutTimer=setTimeout(function(){lock();},AUTH_TTL);
   }
   function lock(){
     if(logoutTimer){clearTimeout(logoutTimer);logoutTimer=null;}
+    sessionStorage.removeItem('tp_auth');
     document.body.classList.add('tp-locked');
     gateActive=true;
     document.getElementById('tp-gate-pwd').value='';
@@ -2679,6 +2683,16 @@ function toggleFaq(el) {
     /* Re-init gate rain if needed */
     if(typeof initGateRain==='function')initGateRain();
   }
+  /* Check for valid session (survives OAuth redirects, expires after 10 min) */
+  var savedAuth=sessionStorage.getItem('tp_auth');
+  if(savedAuth&&(Date.now()-parseInt(savedAuth,10))<AUTH_TTL){
+    var remaining=AUTH_TTL-(Date.now()-parseInt(savedAuth,10));
+    document.body.classList.remove('tp-locked');
+    gateActive=false;
+    logoutTimer=setTimeout(function(){lock();},remaining);
+    return;
+  }
+  sessionStorage.removeItem('tp_auth');
 
   /* ── Tab switching ── */
   document.querySelectorAll('.gate-tab').forEach(function(tab){
