@@ -2656,7 +2656,7 @@ function toggleFaq(el) {
 <script>
 (function(){
   /* ── Auth logic ── */
-  var H='186c650890a6a6070d1c4ca3a85a38ab6857c4c1bea2abab341af91f7b7dcfa6';
+  var H=['186c650890a6a6070d1c4ca3a85a38ab6857c4c1bea2abab341af91f7b7dcfa6','de028beba5ef6602ce8f8c676d8b703c25f1b743547ce6b989426583215843bc'];
   /* TOTP shared secret (Base32). Replace with your own secret. */
   var TOTP_SECRET='7SU5ERUBEKYBRZLB7LW5L4FAEWSP6BJP';
   var activeMethod='pwd';
@@ -2803,7 +2803,7 @@ function toggleFaq(el) {
       var buf=new TextEncoder().encode(pwd);
       var hash=await crypto.subtle.digest('SHA-256',buf);
       var hex=Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(hex===H){unlock();}
+      if(H.indexOf(hex)!==-1){unlock();}
       else{showGateErr('Invalid password');document.getElementById('tp-gate-pwd').value='';}
     } else {
       var code=Array.from(totpDigits).map(function(d){return d.value;}).join('');
