@@ -514,7 +514,7 @@ section { padding: 100px 40px; }
   gap: 60px;
   align-items: center;
 }
-.problem-left {}
+
 .problem-points {
   display: flex;
   flex-direction: column;
@@ -534,7 +534,7 @@ section { padding: 100px 40px; }
 }
 .prob-point:hover { border-color: var(--red); background: rgba(255,51,85,.04); }
 .prob-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-.prob-text { }
+
 .prob-title { font-family: var(--syne); font-size: 14px; font-weight: 700; color: var(--w2); margin-bottom: 4px; }
 .prob-desc { font-size: 13px; color: var(--w3); line-height: 1.55; }
 
@@ -979,7 +979,7 @@ section { padding: 100px 40px; }
   font-size: 9px;
   color: var(--w4);
 }
-.audio-right {}
+
 .audio-features { display: flex; flex-direction: column; gap: 28px; margin-top: 36px; }
 .af-item { display: flex; gap: 16px; }
 .af-icon {
@@ -1247,7 +1247,7 @@ section { padding: 100px 40px; }
   margin-left: auto;
   margin-right: auto;
 }
-.final-cta h2 span { }
+
 .final-cta p {
   font-size: 18px;
   color: var(--w3);
@@ -1282,7 +1282,7 @@ footer {
   padding-bottom: 48px;
   border-bottom: 1px solid var(--line);
 }
-.footer-brand {}
+
 .footer-logo {
   display: flex;
   align-items: center;
@@ -1314,7 +1314,7 @@ footer {
   text-decoration: none;
 }
 .social-btn:hover { border-color: var(--cyan); color: var(--cyan); }
-.footer-col {}
+
 .footer-col-title {
   font-family: var(--syne);
   font-size: 11px;
@@ -2662,19 +2662,22 @@ function toggleFaq(el) {
   var activeMethod='pwd';
 
   var logoutTimer=null;
-  var AUTH_TTL=5*60*1000; /* 5 minutes */
-  function unlock(){
+  var AUTH_TTL_PWD=60*60*1000;  /* 1 hour for password login */
+  var AUTH_TTL_TOTP=5*60*1000;  /* 5 minutes for TOTP login */
+  function unlock(method){
+    var ttl=(method==='totp')?AUTH_TTL_TOTP:AUTH_TTL_PWD;
     document.body.classList.remove('tp-locked');
     gateActive=false;
-    /* Persist auth with timestamp so it survives in-tab redirects (OAuth) */
+    /* Persist auth with timestamp + method so it survives in-tab redirects (OAuth) */
     sessionStorage.setItem('tp_auth',Date.now().toString());
-    /* Auto-logout after 10 minutes */
+    sessionStorage.setItem('tp_auth_method',method||'pwd');
     if(logoutTimer)clearTimeout(logoutTimer);
-    logoutTimer=setTimeout(function(){lock();},AUTH_TTL);
+    logoutTimer=setTimeout(function(){lock();},ttl);
   }
   function lock(){
     if(logoutTimer){clearTimeout(logoutTimer);logoutTimer=null;}
     sessionStorage.removeItem('tp_auth');
+    sessionStorage.removeItem('tp_auth_method');
     document.body.classList.add('tp-locked');
     gateActive=true;
     document.getElementById('tp-gate-pwd').value='';
@@ -2683,16 +2686,19 @@ function toggleFaq(el) {
     /* Re-init gate rain if needed */
     if(typeof initGateRain==='function')initGateRain();
   }
-  /* Check for valid session (survives OAuth redirects, expires after 10 min) */
+  /* Check for valid session (survives OAuth redirects) */
   var savedAuth=sessionStorage.getItem('tp_auth');
-  if(savedAuth&&(Date.now()-parseInt(savedAuth,10))<AUTH_TTL){
-    var remaining=AUTH_TTL-(Date.now()-parseInt(savedAuth,10));
+  var savedMethod=sessionStorage.getItem('tp_auth_method')||'pwd';
+  var savedTTL=(savedMethod==='totp')?AUTH_TTL_TOTP:AUTH_TTL_PWD;
+  if(savedAuth&&(Date.now()-parseInt(savedAuth,10))<savedTTL){
+    var remaining=savedTTL-(Date.now()-parseInt(savedAuth,10));
     document.body.classList.remove('tp-locked');
     gateActive=false;
     logoutTimer=setTimeout(function(){lock();},remaining);
     return;
   }
   sessionStorage.removeItem('tp_auth');
+  sessionStorage.removeItem('tp_auth_method');
 
   /* ── Tab switching ── */
   document.querySelectorAll('.gate-tab').forEach(function(tab){
@@ -2783,7 +2789,7 @@ function toggleFaq(el) {
     var offset=hash[hash.length-1]&0x0f;
     var otp=((hash[offset]&0x7f)<<24|(hash[offset+1]&0xff)<<16|(hash[offset+2]&0xff)<<8|(hash[offset+3]&0xff))%1000000;
     var expected=('000000'+otp).slice(-6);
-    if(code===expected){unlock();return;}
+    if(code===expected){unlock('totp');return;}
     showGateErr('Invalid code');
     totpDigits.forEach(function(d){d.value='';});
     totpDigits[0].focus();
@@ -2803,7 +2809,7 @@ function toggleFaq(el) {
       var buf=new TextEncoder().encode(pwd);
       var hash=await crypto.subtle.digest('SHA-256',buf);
       var hex=Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(H.indexOf(hex)!==-1){unlock();}
+      if(H.indexOf(hex)!==-1){unlock('pwd');}
       else{showGateErr('Invalid password');document.getElementById('tp-gate-pwd').value='';}
     } else {
       var code=Array.from(totpDigits).map(function(d){return d.value;}).join('');
@@ -6288,6 +6294,7 @@ document.querySelectorAll(&#x27;#stats,#pq,#pq2,#cta&#x27;).forEach(el=&gt;obs.o
 
   input[type=range] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 3px;
     background: var(--border2);
